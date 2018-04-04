@@ -1,0 +1,35 @@
+plugins {
+    id "base"
+}
+apply plugin: HelloPlugin
+apply plugin: GreetingPlugin
+
+//编写自定义插件
+class HelloPlugin implements Plugin<Project> {
+   void apply(Project project) {
+      project.task('hello') << {
+         println "Hello from the HelloPlugin."
+      }
+   }
+}
+
+//从构建获取输入
+greeting {
+   message = 'Hi'
+   greeter = 'Gradle'
+}
+
+class GreetingPlugin implements Plugin<Project> {
+   void apply(Project project) {
+      project.extensions.create("greeting", GreetingPluginExtension)
+
+      project.task('hello1') << {
+         println "${project.greeting.message} from ${project.greeting.greeter}"
+      }
+   }
+}
+class GreetingPluginExtension {
+   String message
+   String greeter
+}
+

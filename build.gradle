@@ -1,0 +1,77 @@
+plugins {
+    id "base"
+}
+
+//properties
+task base << {
+    println "$buildFile.name in '$buildFile.parentFile.name'."
+    println name
+    println project.name
+}
+
+//configured
+task configured {
+    doFirst {
+        println 'This is 2'
+    }
+    doLast {
+        println 'This is 3'
+    }
+    println 'This is 1'
+}
+
+//Evaluate
+ext.hasTests = true
+allprojects {
+    afterEvaluate { project ->
+        if (project.hasTests) {
+            println "Adding test task to $project"
+            project.task('evaluate') {
+                doLast {
+                    println "Running tests for $project"
+                }
+            }
+        }
+    }
+}
+
+//task depends
+task taskD1 << {
+    println 'compiling source #1'
+}
+
+task taskD2(dependsOn: task1) << {
+    println 'compiling unit tests #2'
+}
+
+task taskD3(dependsOn: [task1, task2]) << {
+    println 'running unit tests #3'
+}
+
+
+//files
+task files1 {
+    doLast {
+        File srcDir
+
+        // Create a file collection using a closure
+        FileCollection collection = files { srcDir.listFiles() }
+
+        srcDir = file('otherGradle')
+        println "Contents of $srcDir.name"
+        collection.collect { relativePath(it) }.each { println it }
+
+        collection.each {
+            println relativePath(it)
+        }
+    }
+}
+
+task files2{
+    doLast{
+        def input='build/libs/freemarker.jar'
+        zipTree(input).getFiles().each {
+            println relativePath(it)
+        }
+    }
+}
