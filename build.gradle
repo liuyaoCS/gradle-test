@@ -40,17 +40,17 @@ task taskD1 << {
     println 'compiling source #1'
 }
 
-task taskD2(dependsOn: task1) << {
+task taskD2(dependsOn: taskD1) << {
     println 'compiling unit tests #2'
 }
 
-task taskD3(dependsOn: [task1, task2]) << {
+task taskD3(dependsOn: [taskD1, taskD2]) << {
     println 'running unit tests #3'
 }
 
 
 //files
-task files1 {
+task collect {
     doLast {
         File srcDir
 
@@ -66,12 +66,31 @@ task files1 {
         }
     }
 }
-
-task files2{
+task zipTree{
     doLast{
         def input='build/libs/freemarker.jar'
         zipTree(input).getFiles().each {
             println relativePath(it)
         }
     }
+}
+task dir{
+    mkdir("publish/ftl")
+    mkdir("publish/config")
+    delete("publish")
+}
+task fileContent{
+    def qarthVersion = file("javaModule/src/com/qihoo/qarth/QarthVersion.java")
+    def firstSearch = true
+    def versionName = "0.0.0"
+    qarthVersion.eachLine { line ->
+        if (line.contains('QARTH_VERSION') && firstSearch) {
+            firstSearch = false
+            def first = line.indexOf('"')
+            def last = line.lastIndexOf('"')
+            versionName = line.substring(first+1, last)
+            return
+        }
+    }
+    println("versionName="+versionName)
 }
