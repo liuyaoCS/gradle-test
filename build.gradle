@@ -1,3 +1,6 @@
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 plugins {
     id "base"
 }
@@ -93,4 +96,44 @@ task fileContent{
         }
     }
     println("versionName="+versionName)
+}
+/// file content rewrite,enableDebug/disableDebug are added in app configration
+static def fileRead(file, oldStr, newStr) {
+    def readerString = "";
+    file.withReader('UTF-8') { reader ->
+        reader.eachLine {
+            if (it.find(oldStr)) {
+                it = it.replace(oldStr, newStr)
+            }
+            readerString <<= it
+            readerString << '\n'
+        }
+        return readerString
+    }
+}
+static def fileWrite(file, stringBuffer) {
+    file.withWriter('UTF-8') { within ->
+        within.append(stringBuffer)
+    }
+}
+task enableDebug << {
+    def debugF = file('java/com/qihoo/hotfix/Debug.java')
+    def strBuffer = fileRead(debugF , "LOG_DEBUG = false", "LOG_DEBUG = true");
+    fileWrite(debugF, strBuffer);
+}
+task disableDebug << {
+    def debugF = file('java/com/qihoo/hotfix/Debug.java')
+    def strBuffer = fileRead(debugF , "LOG_DEBUG = true", "LOG_DEBUG = false");
+    fileWrite(debugF, strBuffer);
+}
+
+//other test
+task other<<{
+//    def md5="2de10f66f6aa235aa741c23f8f64d3f1"
+//
+//    Pattern pattern = Pattern.compile("^[0-9a-z]{32}\$")
+//    Matcher matcher = pattern.matcher(md5)
+//    def ret= matcher.matches()
+//
+//    println(ret)
 }
