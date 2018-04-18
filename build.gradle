@@ -83,7 +83,7 @@ task dir{
     delete("publish")
 }
 task fileContent{
-    def qarthVersion = file("javaModule/src/com/qihoo/qarth/QarthVersion.java")
+    def qarthVersion = file("javaModule/src/com/qihoo/qarth/Test.java")
     def firstSearch = true
     def versionName = "0.0.0"
     qarthVersion.eachLine { line ->
