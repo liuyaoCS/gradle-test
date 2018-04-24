@@ -12,6 +12,19 @@ task base << {
     println project.name
 }
 
+//task depends
+task taskD1 << {
+    println 'compiling source #1'
+}
+
+task taskD2(dependsOn: taskD1) << {
+    println 'compiling unit tests #2'
+}
+
+task taskD3(dependsOn: [taskD1, taskD2]) << {
+    println 'running unit tests #3'
+}
+
 //configured
 task configured {
     doFirst {
@@ -37,20 +50,11 @@ allprojects {
         }
     }
 }
-
-//task depends
-task taskD1 << {
-    println 'compiling source #1'
+tasks.whenTaskAdded { task ->
+    if (task.name.equals('mockableAndroidJar')) {
+        task.enabled = false
+    }
 }
-
-task taskD2(dependsOn: taskD1) << {
-    println 'compiling unit tests #2'
-}
-
-task taskD3(dependsOn: [taskD1, taskD2]) << {
-    println 'running unit tests #3'
-}
-
 
 //files
 task collect {
@@ -83,19 +87,19 @@ task dir{
     delete("publish")
 }
 task fileContent{
-    def qarthVersion = file("javaModule/src/com/qihoo/qarth/Test.java")
-    def firstSearch = true
-    def versionName = "0.0.0"
-    qarthVersion.eachLine { line ->
-        if (line.contains('QARTH_VERSION') && firstSearch) {
-            firstSearch = false
-            def first = line.indexOf('"')
-            def last = line.lastIndexOf('"')
-            versionName = line.substring(first+1, last)
-            return
-        }
-    }
-    println("versionName="+versionName)
+//    def qarthVersion = file("javaModule/src/com/qihoo/qarth/Test.java")
+//    def firstSearch = true
+//    def versionName = "0.0.0"
+//    qarthVersion.eachLine { line ->
+//        if (line.contains('QARTH_VERSION') && firstSearch) {
+//            firstSearch = false
+//            def first = line.indexOf('"')
+//            def last = line.lastIndexOf('"')
+//            versionName = line.substring(first+1, last)
+//            return
+//        }
+//    }
+//    println("versionName="+versionName)
 }
 /// file content rewrite,enableDebug/disableDebug are added in app configration
 static def fileRead(file, oldStr, newStr) {
