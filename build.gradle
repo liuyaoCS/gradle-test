@@ -50,6 +50,11 @@ allprojects {
         }
     }
 }
+
+//config task
+tasks.withType(JavaCompile) { task->
+    task.options.encoding = "UTF-8"
+}
 tasks.whenTaskAdded { task ->
     if (task.name.equals('mockableAndroidJar')) {
         task.enabled = false
