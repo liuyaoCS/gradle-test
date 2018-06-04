@@ -1,9 +1,0 @@
-apply plugin: 'java-library'
-apply plugin: 'application'
-
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-}
-
-
-mainClassName='com.example.javalib.Test'
