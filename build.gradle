@@ -5,11 +5,18 @@ plugins {
     id "base"
 }
 
-//properties
-task base << {
+//properties ExtProp and vars
+ext.testPropInfo = "this is test prop"
+def testVarInfo = "this is test var" // if null use gradle -PtestVarInfo varAndProp
+task varAndProp<<{
+    //properties
     println "$buildFile.name in '$buildFile.parentFile.name'."
     println name
     println project.name
+    //extProperties and vars
+    println project.testPropInfo
+    println testVarInfo
+    println "$testVarInfo $project.testPropInfo"
 }
 
 //task depends
@@ -136,7 +143,6 @@ task disableDebug << {
     fileWrite(debugF, strBuffer);
 }
 
-//other test
 task other<<{
 //    def md5="2de10f66f6aa235aa741c23f8f64d3f1"
 //
@@ -145,4 +151,5 @@ task other<<{
 //    def ret= matcher.matches()
 //
 //    println(ret)
+
 }
